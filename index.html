@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" type="image/png" href="images/logo.jpg"/>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+   <!--Import Google Icon Font-->
+   <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.3/Chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <title>Covid-19</title>
+
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="images/icon-96x96.png">
+    <meta name="apple-mobile-web-app-status-bar" content="white">
+    <meta name="theme-color" content="white">
+
+    <style >
+      body{
+        background: rgba(0,0,0,0.9);
+        color: white; 
+        font-family: 'Poppins', sans-serif;
+      }
+      h1{text-align:center;}
+      .row{
+        display:grid;
+        grid-template-columns: 1fr 1fr 1fr;
+      }
+      .row1{
+        display:grid;
+        grid-template-columns: 1fr 1fr;
+      }
+      .input-field{
+        max-width:500px;
+      }
+
+      .activeIndia:hover{
+        background: #bbdefb;
+        //cursor: pointer;
+        transition: all 0.3s;
+      }
+      .recoveredIndia:hover{
+        background: #c8e6c9;
+        //cursor: pointer;
+        transition: all 0.3s;
+      }
+      .deceasedIndia:hover{
+        background: #e0e0e0;
+        //cursor: pointer;
+        transition: all 0.3s;
+      }
+      .confirmedIndia:hover{
+        background: #ffcdd2;
+        //cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .row-s, .row-f, .row-t, .row-g{
+        display: flex; 
+        flex-direction: row; 
+      }
+      .col-s, .col-f, .col-t, .col-g{
+        width: 100%; 
+        height: 100%;
+        margin: 20px auto;
+        padding: 20px;
+      }
+
+      @media only screen and (max-width: 600px) {
+        .row-s, .row-f, .row-t, .row-g{
+          display: flex; 
+          flex-direction: column;
+        }
+        .col-s, .col-f, .col-t, .col-g{
+          padding: 0;
+        }
+      }
+
+      .input-field input[type=text]:focus + label {
+        color: #000;
+      }
+
+      .input-field input[type=text]:focus {
+        border-bottom: 1px solid #1a237e;
+        box-shadow: 0 1px 0 0 #1a237e;
+      }
+
+      ul.dropdown-content.select-dropdown li span {
+          color: black; /* no need for !important :) */
+      }
+ 
+      select option { color: black; }
+      select option:first-child{
+      color: green;
+}
+    
+
+    </style>
+  </head>
+  <body>
+    <div class=" navbar-fixed">
+      <nav class="indigo darken-4">
+        <div class="nav-wrapper container">
+            <a href="#" data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+          <a href="#" class="brand-logo">CoronaTracker</a>
+          <ul id="nav-mobile" class="right hide-on-med-and-down">
+            <li><a target="#" href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public?gclid=CjwKCAjwjLD4BRAiEiwAg5NBFm2R0HF9Q0apVdcH3u-aacKco6dXxPA9Xtm9ycn9C8di--HWCO_rSBoCgiwQAvD_BwE#">WHO</a></li>
+            <li><a target="#" href="https://www.pmcares.gov.in/en/">PM CaresFund</a></li>
+            <li><a target="#" href="https://static.mygov.in/rest/s3fs-public/mygov_159340784951307401.pdf">Helpline</a></li>
+            <li onclick='changeTheme()'><a><i class="material-icons">brightness_6</i></a></li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+    
+
+    <ul id="slide-out" class="sidenav">
+      <li><a href="https://www.who.int/emergencies/diseases/novel-coronavirus-2019/advice-for-public?gclid=CjwKCAjwjLD4BRAiEiwAg5NBFm2R0HF9Q0apVdcH3u-aacKco6dXxPA9Xtm9ycn9C8di--HWCO_rSBoCgiwQAvD_BwE#">WHO</a></li>
+          <li><a href="https://www.pmcares.gov.in/en/">PM CaresFund</a></li>
+          <li><a href="https://static.mygov.in/rest/s3fs-public/mygov_159340784951307401.pdf">Helpline</a></li>
+      <li onclick='changeTheme()'><a><i class="material-icons">brightness_6</i></a></li>
+    </ul>
+  
+    <div class="container">
+        <h1>Covid-19 Update</h1>
+        <p class="center">Covid-19 is a contagious disease. So maintain social distance.</p>
+        <div class="center">
+            <div class="chip">
+                #StayHome
+              </div>
+              <div class="chip">
+                 #StaySafe
+               </div>
+        </div>
+
+        <div class="input-field" style="margin: 50px auto; max-width: 300px;">
+          <span id="currentCountry">(WorldWide)</span>
+          <select id="country" tabindex="-1">
+            <option value="worldwide"  selected="">WorldWide</option>
+          <option value="Afghanistan" >Afghanistan</option><option value="Albania">Albania</option><option value="Algeria">Algeria</option><option value="Andorra">Andorra</option><option value="Angola">Angola</option><option value="Antigua and Barbuda">Antigua and Barbuda</option><option value="Argentina">Argentina</option><option value="Armenia">Armenia</option><option value="Australia">Australia</option><option value="Austria">Austria</option><option value="Azerbaijan">Azerbaijan</option><option value="Bahamas">Bahamas</option><option value="Bahrain">Bahrain</option><option value="Bangladesh">Bangladesh</option><option value="Barbados">Barbados</option><option value="Belarus">Belarus</option><option value="Belgium">Belgium</option><option value="Belize">Belize</option><option value="Benin">Benin</option><option value="Bhutan">Bhutan</option><option value="Bolivia">Bolivia</option><option value="Bosnia and Herzegovina">Bosnia and Herzegovina</option><option value="Botswana">Botswana</option><option value="Brazil">Brazil</option><option value="Brunei">Brunei</option><option value="Bulgaria">Bulgaria</option><option value="Burkina Faso">Burkina Faso</option><option value="Burma">Burma</option><option value="Burundi">Burundi</option><option value="Cabo Verde">Cabo Verde</option><option value="Cambodia">Cambodia</option><option value="Cameroon">Cameroon</option><option value="Canada">Canada</option><option value="Central African Republic">Central African Republic</option><option value="Chad">Chad</option><option value="Chile">Chile</option><option value="China">China</option><option value="Colombia">Colombia</option><option value="Comoros">Comoros</option><option value="Congo (Brazzaville)">Congo (Brazzaville)</option><option value="Congo (Kinshasa)">Congo (Kinshasa)</option><option value="Costa Rica">Costa Rica</option><option value="Cote d" ivoire'="">Cote d'Ivoire</option><option value="Croatia">Croatia</option><option value="Cuba">Cuba</option><option value="Cyprus">Cyprus</option><option value="Czechia">Czechia</option><option value="Denmark">Denmark</option><option value="Diamond Princess">Diamond Princess</option><option value="Djibouti">Djibouti</option><option value="Dominica">Dominica</option><option value="Dominican Republic">Dominican Republic</option><option value="Ecuador">Ecuador</option><option value="Egypt">Egypt</option><option value="El Salvador">El Salvador</option><option value="Equatorial Guinea">Equatorial Guinea</option><option value="Eritrea">Eritrea</option><option value="Estonia">Estonia</option><option value="Eswatini">Eswatini</option><option value="Ethiopia">Ethiopia</option><option value="Fiji">Fiji</option><option value="Finland">Finland</option><option value="France">France</option><option value="Gabon">Gabon</option><option value="Gambia">Gambia</option><option value="Georgia">Georgia</option><option value="Germany">Germany</option><option value="Ghana">Ghana</option><option value="Greece">Greece</option><option value="Grenada">Grenada</option><option value="Guatemala">Guatemala</option><option value="Guinea">Guinea</option><option value="Guinea-Bissau">Guinea-Bissau</option><option value="Guyana">Guyana</option><option value="Haiti">Haiti</option><option value="Holy See">Holy See</option><option value="Honduras">Honduras</option><option value="Hungary">Hungary</option><option value="Iceland">Iceland</option><option value="India">India</option><option value="Indonesia">Indonesia</option><option value="Iran">Iran</option><option value="Iraq">Iraq</option><option value="Ireland">Ireland</option><option value="Israel">Israel</option><option value="Italy">Italy</option><option value="Jamaica">Jamaica</option><option value="Japan">Japan</option><option value="Jordan">Jordan</option><option value="Kazakhstan">Kazakhstan</option><option value="Kenya">Kenya</option><option value="Korea, South">Korea, South</option><option value="Kosovo">Kosovo</option><option value="Kuwait">Kuwait</option><option value="Kyrgyzstan">Kyrgyzstan</option><option value="Laos">Laos</option><option value="Latvia">Latvia</option><option value="Lebanon">Lebanon</option><option value="Lesotho">Lesotho</option><option value="Liberia">Liberia</option><option value="Libya">Libya</option><option value="Liechtenstein">Liechtenstein</option><option value="Lithuania">Lithuania</option><option value="Luxembourg">Luxembourg</option><option value="MS Zaandam">MS Zaandam</option><option value="Madagascar">Madagascar</option><option value="Malawi">Malawi</option><option value="Malaysia">Malaysia</option><option value="Maldives">Maldives</option><option value="Mali">Mali</option><option value="Malta">Malta</option><option value="Mauritania">Mauritania</option><option value="Mauritius">Mauritius</option><option value="Mexico">Mexico</option><option value="Moldova">Moldova</option><option value="Monaco">Monaco</option><option value="Mongolia">Mongolia</option><option value="Montenegro">Montenegro</option><option value="Morocco">Morocco</option><option value="Mozambique">Mozambique</option><option value="Namibia">Namibia</option><option value="Nepal">Nepal</option><option value="Netherlands">Netherlands</option><option value="New Zealand">New Zealand</option><option value="Nicaragua">Nicaragua</option><option value="Niger">Niger</option><option value="Nigeria">Nigeria</option><option value="North Macedonia">North Macedonia</option><option value="Norway">Norway</option><option value="Oman">Oman</option><option value="Pakistan">Pakistan</option><option value="Panama">Panama</option><option value="Papua New Guinea">Papua New Guinea</option><option value="Paraguay">Paraguay</option><option value="Peru">Peru</option><option value="Philippines">Philippines</option><option value="Poland">Poland</option><option value="Portugal">Portugal</option><option value="Qatar">Qatar</option><option value="Romania">Romania</option><option value="Russia">Russia</option><option value="Rwanda">Rwanda</option><option value="Saint Kitts and Nevis">Saint Kitts and Nevis</option><option value="Saint Lucia">Saint Lucia</option><option value="Saint Vincent and the Grenadines">Saint Vincent and the Grenadines</option><option value="San Marino">San Marino</option><option value="Sao Tome and Principe">Sao Tome and Principe</option><option value="Saudi Arabia">Saudi Arabia</option><option value="Senegal">Senegal</option><option value="Serbia">Serbia</option><option value="Seychelles">Seychelles</option><option value="Sierra Leone">Sierra Leone</option><option value="Singapore">Singapore</option><option value="Slovakia">Slovakia</option><option value="Slovenia">Slovenia</option><option value="Somalia">Somalia</option><option value="South Africa">South Africa</option><option value="South Sudan">South Sudan</option><option value="Spain">Spain</option><option value="Sri Lanka">Sri Lanka</option><option value="Sudan">Sudan</option><option value="Suriname">Suriname</option><option value="Sweden">Sweden</option><option value="Switzerland">Switzerland</option><option value="Syria">Syria</option><option value="Taiwan*">Taiwan*</option><option value="Tajikistan">Tajikistan</option><option value="Tanzania">Tanzania</option><option value="Thailand">Thailand</option><option value="Timor-Leste">Timor-Leste</option><option value="Togo">Togo</option><option value="Trinidad and Tobago">Trinidad and Tobago</option><option value="Tunisia">Tunisia</option><option value="Turkey">Turkey</option><option value="US">US</option><option value="Uganda">Uganda</option><option value="Ukraine">Ukraine</option><option value="United Arab Emirates">United Arab Emirates</option><option value="United Kingdom">United Kingdom</option><option value="Uruguay">Uruguay</option><option value="Uzbekistan">Uzbekistan</option><option value="Venezuela">Venezuela</option><option value="Vietnam">Vietnam</option><option value="West Bank and Gaza">West Bank and Gaza</option><option value="Western Sahara">Western Sahara</option><option value="Yemen">Yemen</option><option value="Zambia">Zambia</option><option value="Zimbabwe">Zimbabwe</option></select>
+        </div>
+
+        <h5>Daily Update</h5>
+        <small class="text-left d-block" id="last_update">Last Updated on </small>
+
+
+      <br /><br />
+      <div class="row-g z-depth-1" style="border: solid 0.5px white;">
+        <div class="col-g">
+          <div class="center-align" style="padding: 10px 0;">
+            <span class="text-muted">Total Infected</span>
+            <h3 class="text-warning red-text">
+              <span id="infected"></span>
+            </h3>
+            <div id="increased-infected">
+
+            </div>
+          </div>
+        </div>
+        <div class="col-g">
+          <div class="center-align" style="padding: 10px 0;">
+            <span class="text-muted">Total Active</span>
+            <h3 class="text-warning blue-text">
+              <span id="active"></span>
+            </h3>
+            <div id="increased-active">
+
+            </div>
+          </div>
+        </div>
+        <div class="col-g">
+          <div class="center-align" style="padding: 10px 0;">
+            <span class="text-muted">Total Recovered</span>
+            <h3 class="text-warning green-text">
+              <span id="recovered"></span>
+            </h3>
+            <div id="decreased-recovered">
+
+            </div>
+          </div>
+        </div>
+        <div class="col-g">
+          <div class="center-align" style="padding: 10px 0;">
+            <span class="text-muted">Total Deaths</span>
+            <h3 class="text-warning grey-text">
+              <span id="deaths"></span>
+            </h3>
+            <div id="increased-deaths">
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <canvas id="myChart" style="margin-top: 50px;"></canvas>
+      <br>
+      <br>
+
+      <h1 class="center-align">India</h1>
+      <small class="text-left d-block" id="updatedon">Stats Of </small>
+        <div class="" style="display: flex; flex-direction: row; margin: 30px auto;">
+          <div class="confirmedIndia center-align" style="width: 100%; padding: 30px 0; border-radius: 10px;">
+            <strong class="red-text">Confirmed</strong>
+            <span id="confirmedIndia" style="display: block;"></span>
+            <small style="display: block; margin-top: 5px;" id="increasedIndiaConfirmed"><i class="tiny material-icons red-text">arrow_upward</i></small>
+            <i class="material-icons red-text">show_chart</i>  
+          </div>
+          <div class="activeIndia center-align" style="width: 100%; padding: 30px 0; border-radius: 10px;">
+            <strong class="blue-text">Active</strong>
+            <span id="activeIndia" style="display: block;"></span>
+            <small style="display: block; margin-top: 5px;" id="increasedIndiaActive"><i class="tiny material-icons blue-text">arrow_upward</i></small>
+            <i class="material-icons blue-text">show_chart</i> 
+          </div>
+          <div class="recoveredIndia center-align" style="width: 100%; padding: 30px 0; border-radius: 10px;">
+            <strong class="green-text">Recovered</strong>
+            <span id="recoveredIndia" style="display: block;"></span>
+            <small style="display: block; margin-top: 5px;" id="increasedIndiaRecovered"><i class="tiny material-icons green-text">arrow_upward</i></small>
+            <i class="material-icons green-text">show_chart</i> 
+          </div>
+          <div class="deceasedIndia center-align" style="width: 100%; padding: 30px 0; border-radius: 10px;">
+            <strong class="grey-text">Deceased</strong>
+            <span id="deceasedIndia" style="display: block;"></span>
+            <small style="display: block; margin-top: 5px;" id="increasedIndiaDeceased"><i class="tiny material-icons grey-text">arrow_upward</i></small>
+            <i class="material-icons grey-text">show_chart</i> 
+          </div>
+        </div>
+
+
+        <table class="highlight responsive-table">
+          <thead>
+           <tr>
+              <th>state/UT</th>
+              <th>Infected  <i class="tiny material-icons red-text" style="display:block;padding: 2px;">show_chart</i></th>
+              <th>Recovered <i class="tiny material-icons green-text" style="display:block; padding: 2px;">show_chart</i></th>
+              <th>Deceased <i class="tiny material-icons grey-text" style="display:block; padding: 2px;">show_chart</i></th><br>
+              <th>Active <i class="tiny material-icons blue-text" style="display:block; padding: 2px;">show_chart</i></th>
+              <th>Testing <i class="tiny material-icons purple-text" style="display:block; padding: 2px;">show_chart</i></th>
+            </tr>
+          </thead>
+          <tbody id="tbody">
+
+          </tbody>
+        </table>
+
+        <h4 style="margin-top: 50px;">Select state</h4>
+        <span id="currentState">(Maharashtra)</span>
+        <div class="input-field" style="max-width: 300px;">
+          <select id="states" tabindex="-1">
+          <option value="Maharashtra">Maharashtra</option><option value="Tamil Nadu">Tamil Nadu</option><option value="Delhi">Delhi</option><option value="Gujarat">Gujarat</option><option value="Uttar Pradesh">Uttar Pradesh</option><option value="Rajasthan">Rajasthan</option><option value="West Bengal">West Bengal</option><option value="Madhya Pradesh">Madhya Pradesh</option><option value="Haryana">Haryana</option><option value="Karnataka">Karnataka</option><option value="Andhra Pradesh">Andhra Pradesh</option><option value="Bihar">Bihar</option><option value="Telangana">Telangana</option><option value="Jammu and Kashmir">Jammu and Kashmir</option><option value="Assam">Assam</option><option value="Odisha">Odisha</option><option value="Punjab">Punjab</option><option value="Kerala">Kerala</option><option value="Uttarakhand">Uttarakhand</option><option value="Chhattisgarh">Chhattisgarh</option><option value="Jharkhand">Jharkhand</option><option value="Tripura">Tripura</option><option value="Ladakh">Ladakh</option><option value="Goa">Goa</option><option value="Himachal Pradesh">Himachal Pradesh</option><option value="Manipur">Manipur</option><option value="Chandigarh">Chandigarh</option><option value="Puducherry">Puducherry</option><option value="Nagaland">Nagaland</option><option value="Mizoram">Mizoram</option><option value="Arunachal Pradesh">Arunachal Pradesh</option><option value="Sikkim">Sikkim</option><option value="Dadra and Nagar Haveli and Daman and Diu">Dadra and Nagar Haveli and Daman and Diu</option><option value="Andaman and Nicobar Islands">Andaman and Nicobar Islands</option><option value="Meghalaya">Meghalaya</option><option value="Lakshadweep">Lakshadweep</option></select>
+        </div>
+
+        <div class="row-s">
+          <div class="col-s">
+              <canvas id="confirmedIndiaChart" style="background: rgba(244, 9, 20, 0.2); border-radius: 8px;"></canvas>
+          </div>
+          <div class="col-s">
+              <canvas id="activeIndiaChart" style="background: rgba(9, 109, 244, 0.2);border-radius: 8px;"></canvas>
+          </div>   
+        </div>
+        <div class="row-f">
+          <div class="col-f">
+              <canvas id="recoveredIndiaChart" style="background: rgba(45, 225, 34 , 0.2);border-radius: 8px;"></canvas>
+          </div>
+          <div class="col-f">
+              <canvas id="deceasedIndiaChart" style="background: rgba(119, 120, 119, 0.2);border-radius: 8px;"></canvas>
+          </div>
+        </div>
+        <div class="row-t">
+          <div class="col-t">
+              <canvas id="testedIndiaChart" style="background: rgba(154, 110, 222, 0.5);border-radius: 8px;"></canvas>
+          </div>
+          <div class="col-t">
+              
+          </div>
+        </div> 
+    </div>
+
+
+      <p class="center-align" style="margin-top: 50px;">
+        Copyright &copy; 2020, Karan Ashiwal
+      </p>
+      <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+      <script type="text/javascript" src="script.js"></script>
+      <script>
+        $(function(){
+          $('select').formSelect();
+          $('.sidenav').sidenav();  
+        })
+      </script>
+      <script type="text/javascript" src="sw-app.js"></script>
+  </body>
+</html>

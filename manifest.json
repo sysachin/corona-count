@@ -1,0 +1,27 @@
+{
+    "name": "Corona Tracker",
+    "short_name": "Corona Tracker",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "white",
+    "theme_color": "white",
+    "orientation": "portrait-primary",
+    "icons": [
+      {
+        "src": "/images/icon-72x72.png",
+        "type": "image/png",
+        "sizes": "72x72"
+      },
+      {
+        "src": "/images/icon-96x96.png",
+        "type": "image/png",
+        "sizes": "96x96"
+      },
+      {
+        "src": "/images/icon-128x128.png",
+        "type": "image/png",
+        "sizes": "128x128"
+      }
+    ]
+  }
+  
